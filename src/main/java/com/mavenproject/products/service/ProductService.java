@@ -21,4 +21,9 @@ public class ProductService {
         List<Product> products = new ArrayList<>();
         return products;
     }
+
+    public Product save(Product product) {
+        LOGGER.info("Saving new product with name:{}", product.getName());
+        return product;
+    }
 }

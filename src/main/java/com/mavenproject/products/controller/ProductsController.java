@@ -7,9 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,6 +43,20 @@ public class ProductsController {
         }
         else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<?> saveProduct(@RequestBody Product product){
+        LOGGER.info("Adding new product with name:{}", product.getName());
+        Product newProduct = productService.save(product);
+        try {
+            return ResponseEntity
+                    .created(new URI("/products/" + newProduct.getId()))
+                    .eTag(Integer.toString(newProduct.getVersion()))
+                    .body(newProduct);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

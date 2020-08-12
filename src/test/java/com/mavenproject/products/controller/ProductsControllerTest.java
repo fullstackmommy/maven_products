@@ -1,10 +1,12 @@
 package com.mavenproject.products.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mavenproject.products.model.Product;
 import com.mavenproject.products.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -71,6 +74,27 @@ public class ProductsControllerTest {
                 .andExpect(jsonPath("$.quantity", is(10)))
                 .andExpect(jsonPath("$.version", is(1)));
 
+    }
+
+    @Test
+    @DisplayName("Add a new product - POST /products")
+    public void testAddNewProduct() throws Exception {
+        Product newProduct = new Product("New Product", "New Product Description", 8);
+        Product mockProduct = new Product(1, "New Product", "New Product Description", 8, 1);
+
+        doReturn(mockProduct).when(productService).save(ArgumentMatchers.any());
+
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(newProduct)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/products/1"))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("New Product")))
+                .andExpect(jsonPath("$.quantity", is(8)))
+                .andExpect(jsonPath("$.version", is(1)));
     }
 
 
