@@ -2,7 +2,6 @@ package com.mavenproject.products.service;
 
 import com.mavenproject.products.model.Product;
 import com.mavenproject.products.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.AssertionErrors;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(SpringExtension.class)
@@ -48,7 +48,7 @@ public class ProductServiceTest {
 
         Product foundProduct = productService.findById(1);
 
-        Assertions.assertNull(foundProduct);
+        assertNull(foundProduct);
     }
 
     @Test
@@ -61,6 +61,20 @@ public class ProductServiceTest {
 
         Iterable<Product> allProducts = productService.findAll();
 
-        Assertions.assertEquals(2, ((Collection<?>) allProducts).size());
+        assertEquals(2, ((Collection<?>) allProducts).size());
+    }
+
+    @Test
+    @DisplayName("Save new product successfully")
+    public void testSuccessfulProductSave(){
+        Product mockProduct = new Product(1, "Product 1", "Description 1", 10, 1);
+
+        doReturn(mockProduct).when(productRepository).save(any());
+
+        Product savedProduct = productService.save(mockProduct);
+
+        AssertionErrors.assertNotNull("Product should not be null", savedProduct);
+        assertSame("Product 1", mockProduct.getName());
+        assertSame(1, savedProduct.getVersion());
     }
 }

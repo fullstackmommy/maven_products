@@ -33,7 +33,8 @@ public class ProductService {
 
     public Product update(Product product) {
         LOGGER.info("Updating product with id:{}", product.getId());
-        return product;
+        product.setVersion(1);
+        return productRepository.save(product);
     }
 
     public void delete(Integer id) {
