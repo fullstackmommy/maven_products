@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -97,5 +98,26 @@ public class ProductsControllerTest {
                 .andExpect(jsonPath("$.version", is(1)));
     }
 
+    @Test
+    @DisplayName("Update an existing product with success - PUT /products/1")
+    public void testUpdatingProductWithSuccess() throws Exception {
+        Product productToUpdate = new Product("New name", "New description", 20);
+        Product mockProduct = new Product(1, "Mock product", "Mock product desc", 10, 1);
 
+        doReturn(mockProduct).when(productService).findById(1);
+        doReturn(mockProduct).when(productService).update(ArgumentMatchers.any());
+
+        mockMvc.perform(put("/products/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.IF_MATCH, 1)
+                .content(new ObjectMapper().writeValueAsString(productToUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.ETAG, "\"2\""))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/products/1"))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("New name")))
+                .andExpect(jsonPath("$.description", is("New description")))
+                .andExpect(jsonPath("$.quantity", is(20)));
+    }
 }

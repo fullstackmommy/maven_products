@@ -26,4 +26,9 @@ public class ProductService {
         LOGGER.info("Saving new product with name:{}", product.getName());
         return product;
     }
+
+    public Product update(Product product) {
+        LOGGER.info("Updating product with id:{}", product.getId());
+        return product;
+    }
 }
