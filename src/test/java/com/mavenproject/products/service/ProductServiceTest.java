@@ -11,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doReturn;
@@ -46,5 +49,18 @@ public class ProductServiceTest {
         Product foundProduct = productService.findById(1);
 
         Assertions.assertNull(foundProduct);
+    }
+
+    @Test
+    @DisplayName("Find all products")
+    public void testFindAllProducts(){
+        Product firstProduct = new Product(1, "First Product", "Product Description 1", 10, 1);
+        Product secondProduct = new Product(2, "Second Product", "Product Description 2", 20, 1);
+
+        doReturn(Arrays.asList(firstProduct, secondProduct)).when(productRepository).findAll();
+
+        Iterable<Product> allProducts = productService.findAll();
+
+        Assertions.assertEquals(2, ((Collection<?>) allProducts).size());
     }
 }

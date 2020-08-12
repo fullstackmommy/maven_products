@@ -22,9 +22,8 @@ public class ProductService {
         return productRepository.findProductById(id);
     }
 
-    public List<Product> findAll() {
-        List<Product> products = new ArrayList<>();
-        return products;
+    public Iterable<Product> findAll() {
+        return productRepository.findAll();
     }
 
     public Product save(Product product) {
