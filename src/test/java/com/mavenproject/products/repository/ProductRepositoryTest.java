@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class ProductRepositoryTest {
@@ -39,11 +41,21 @@ public class ProductRepositoryTest {
 
     @Test
     @DisplayName("Test product not found with non-existing id")
-    public void testProductNotFoundForNonExistingId(){
+    public void testProductNotFoundForNonExistingId() {
         Product retrievedProduct = productRepository.findProductById(100);
 
-        Assertions.assertNull(retrievedProduct, "Product with id 100 should not exist");
+        assertNull(retrievedProduct, "Product with id 100 should not exist");
     }
 
+    @Test
+    @DisplayName("Test product saved successfully")
+    public void testProductSavedSuccessfully() {
+        Product newProduct = new Product("New Product", "New Product Description", 8);
 
+        Product savedProduct = productRepository.save(newProduct);
+
+        assertNotNull(savedProduct, "Product should be saved");
+        assertNotNull(savedProduct.getId(), "Product should have an id when saved");
+        assertEquals(newProduct.getName(), savedProduct.getName());
+    }
 }
