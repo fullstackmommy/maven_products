@@ -91,4 +91,17 @@ public class ProductsController {
             }
         }
     }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
+        LOGGER.info("Deleting product with id:{}", id);
+
+        Product existingProduct = productService.findById(id);
+        if (existingProduct != null) {
+            productService.delete(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

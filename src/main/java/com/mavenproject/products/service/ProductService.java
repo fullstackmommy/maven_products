@@ -31,4 +31,8 @@ public class ProductService {
         LOGGER.info("Updating product with id:{}", product.getId());
         return product;
     }
+
+    public void delete(Integer id) {
+        LOGGER.info("Deleting product with id:{}", id);
+    }
 }

@@ -23,8 +23,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -152,4 +151,23 @@ public class ProductsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @DisplayName("Delete a product with success - DELETE /products/1")
+    public void testPRoduxtDeletedSuccessfully() throws Exception {
+        Product existingProduct = new Product(1, "Product 1", "Product Description 1", 10, 1);
+
+        doReturn(existingProduct).when(productService).findById(1);
+
+        mockMvc.perform(delete("/products/{id}", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Fail to delete a non-existing product - DELETE /products/1")
+    public void testFailureToDeleteNonExistingProduct() throws Exception {
+        doReturn(null).when(productService).findById(1);
+
+        mockMvc.perform(delete("/products/{id}", 1))
+                .andExpect(status().isNotFound());
+    }
 }
