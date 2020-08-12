@@ -58,4 +58,16 @@ public class ProductRepositoryTest {
         assertNotNull(savedProduct.getId(), "Product should have an id when saved");
         assertEquals(newProduct.getName(), savedProduct.getName());
     }
+
+    @Test
+    @DisplayName("Test product updated successfully")
+    public void testProductUpdatedSuccessfully() {
+        Product productToUpdate = new Product(1, "Updated Product", "New Product Description", 20, 2);
+
+        Product updatedProduct = productRepository.save(productToUpdate);
+
+        assertEquals(productToUpdate.getName(), updatedProduct.getName());
+        assertEquals(2, updatedProduct.getVersion());
+        assertEquals(20, updatedProduct.getQuantity());
+    }
 }
