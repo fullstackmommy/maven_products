@@ -70,4 +70,12 @@ public class ProductRepositoryTest {
         assertEquals(2, updatedProduct.getVersion());
         assertEquals(20, updatedProduct.getQuantity());
     }
+
+    @Test
+    @DisplayName("Test product deleted successfully")
+    public void testProductDeletedSuccessfully() {
+        productRepository.deleteById(1);
+
+        Assertions.assertEquals(1L, productRepository.count());
+    }
 }
