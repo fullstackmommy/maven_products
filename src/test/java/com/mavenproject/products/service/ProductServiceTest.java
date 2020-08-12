@@ -2,6 +2,7 @@ package com.mavenproject.products.service;
 
 import com.mavenproject.products.model.Product;
 import com.mavenproject.products.repository.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,5 +77,31 @@ public class ProductServiceTest {
         AssertionErrors.assertNotNull("Product should not be null", savedProduct);
         assertSame("Product 1", mockProduct.getName());
         assertSame(1, savedProduct.getVersion());
+    }
+
+    @Test
+    @DisplayName("Update an existing product successfully")
+    public void testUpdatingProductSuccessfully(){
+        Product existingProduct = new Product(1, "Product", "Description", 10, 1);
+        Product updatedProduct = new Product(1, "New Name", "Description", 20, 2);
+
+        doReturn(existingProduct).when(productRepository).findProductById(1);
+        doReturn(updatedProduct).when(productRepository).save(existingProduct);
+
+        Product updateProduct = productService.update(existingProduct);
+
+        Assertions.assertEquals("New Name", updateProduct.getName());
+    }
+
+    @Test
+    @DisplayName("Fail to update an existing product")
+    public void testFailToUpdateExistingProduct(){
+        Product mockProduct = new Product(1, "Product", "Description", 10, 1);
+
+        doReturn(null).when(productRepository).findProductById(1);
+
+        Product updatedProduct = productService.update(mockProduct);
+
+        AssertionErrors.assertNull("Product should be null", updatedProduct);
     }
 }

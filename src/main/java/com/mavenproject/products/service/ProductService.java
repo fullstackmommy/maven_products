@@ -33,8 +33,16 @@ public class ProductService {
 
     public Product update(Product product) {
         LOGGER.info("Updating product with id:{}", product.getId());
-        product.setVersion(1);
-        return productRepository.save(product);
+        Product existingProduct = productRepository.findProductById(product.getId());
+        if (existingProduct != null){
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setQuantity(product.getQuantity());
+            existingProduct = productRepository.save(existingProduct);
+        } else {
+            LOGGER.error("Product with id {} could not be updated!", product.getId());
+        }
+        return existingProduct;
     }
 
     public void delete(Integer id) {
