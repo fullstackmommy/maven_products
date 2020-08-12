@@ -1,8 +1,10 @@
 package com.mavenproject.products.service;
 
 import com.mavenproject.products.model.Product;
+import com.mavenproject.products.repository.ProductRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,9 +14,12 @@ import java.util.List;
 public class ProductService {
     private static final Logger LOGGER = LogManager.getLogger(ProductService.class);
 
+    @Autowired
+    private ProductRepository productRepository;
+
     public Product findById(Integer id) {
         LOGGER.info("Finding product by id: {}", id);
-        return new Product();
+        return productRepository.findProductById(id);
     }
 
     public List<Product> findAll() {
