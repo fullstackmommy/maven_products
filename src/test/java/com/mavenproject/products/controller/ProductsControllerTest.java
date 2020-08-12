@@ -120,4 +120,36 @@ public class ProductsControllerTest {
                 .andExpect(jsonPath("$.description", is("New description")))
                 .andExpect(jsonPath("$.quantity", is(20)));
     }
+
+    @Test
+    @DisplayName("Version mismatch while updating existing product - PUT /products/1")
+    public void testVersionMismatchWhileUpdating() throws Exception {
+        Product productToUpdate = new Product("New name", "New description", 20);
+        Product mockProduct = new Product(1, "Mock product", "Mock product desc", 10, 2);
+
+        doReturn(mockProduct).when(productService).findById(1);
+
+        mockMvc.perform(put("/products/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.IF_MATCH, 1)
+                .content(new ObjectMapper().writeValueAsString(productToUpdate)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("Product not found while updating - PUT /products/1")
+    public void testProductNotFoundWhileUpdating() throws Exception{
+        Product productToUpdate = new Product("New name", "New description", 20);
+
+        doReturn(null).when(productService).findById(1);
+
+        mockMvc.perform(put("/products/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.IF_MATCH, 1)
+                .content(new ObjectMapper().writeValueAsString(productToUpdate)))
+
+                // Validate 404 NOT_FOUND received
+                .andExpect(status().isNotFound());
+    }
+
 }
