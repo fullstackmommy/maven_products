@@ -28,7 +28,8 @@ public class ProductService {
 
     public Product save(Product product) {
         LOGGER.info("Saving new product with name:{}", product.getName());
-        return product;
+        product.setVersion(1);
+        return productRepository.save(product);
     }
 
     public Product update(Product product) {
@@ -45,7 +46,13 @@ public class ProductService {
         return existingProduct;
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id){
         LOGGER.info("Deleting product with id:{}", id);
+        Product existingProduct = productRepository.findProductById(id);
+        if (existingProduct != null){
+            productRepository.delete(existingProduct);
+        } else {
+            LOGGER.error("Product with id {} could not be found!", id);
+        }
     }
 }
