@@ -153,7 +153,7 @@ public class ProductsControllerTest {
 
     @Test
     @DisplayName("Delete a product with success - DELETE /products/1")
-    public void testPRoduxtDeletedSuccessfully() throws Exception {
+    public void testProductDeletedSuccessfully() throws Exception {
         Product existingProduct = new Product(1, "Product 1", "Product Description 1", 10, 1);
 
         doReturn(existingProduct).when(productService).findById(1);
